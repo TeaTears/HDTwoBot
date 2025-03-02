@@ -15,7 +15,6 @@ async def invite(ctx, *, message: str = "Join us in voice chat!"):
     else:
         await ctx.send("❌ You are not in a voice channel!")
 
-
 if __name__ == "__main__":
     from config.settings import TOKEN
 
