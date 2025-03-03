@@ -1,14 +1,28 @@
 import discord
 from discord.ext import commands
+from cachetools import TTLCache
 
 from config.bot_setup import bot
-from config.constants import BASE_VOICE_CHANNEL_ID, GUILD_ID
+from config.constants import BASE_VOICE_CHANNEL_ID, GUILD_ID, ALLOWED_CHANNEL_ID
 import voice_handler
+import time
 
+last_used_cache = TTLCache(maxsize=50, ttl=15)
 
 @bot.command()
-@commands.cooldown(1, 15, commands.BucketType.user)
 async def invite(ctx, *, message: str = "Join us in voice chat!"):
+    if ctx.channel.id != ALLOWED_CHANNEL_ID:
+        return
+
+    user_id = ctx.author.id
+    current_time = time.time()
+
+    if user_id in last_used_cache:
+        await ctx.send(f"⏳ {ctx.author.mention}, you can only use this command once every 15 seconds.")
+        return
+
+    last_used_cache[user_id] = current_time
+
     MAX_MESSAGE_LENGTH = 100
 
     if len(message) > MAX_MESSAGE_LENGTH:
@@ -19,15 +33,9 @@ async def invite(ctx, *, message: str = "Join us in voice chat!"):
     if ctx.author.voice and ctx.author.voice.channel:
         voice_channel = ctx.author.voice.channel
         invite = await voice_channel.create_invite(max_age=1800, max_uses=0)
-        await ctx.send(f"**Voice Channel Invite:** {invite.url}\n{ctx.author.mention} says: {message}")
+        await ctx.send(f"**Voice Channel Invite:** {invite.url}\n{message}")
     else:
-        await ctx.send(f"❌ {ctx.author.mention}, you are not in a voice channel!")
-
-@invite.error
-async def invite_error(ctx, error):
-    if isinstance(error, commands.CommandOnCooldown):
-        await ctx.send(f"⏳ Please wait {error.retry_after:.1f} seconds before using `{PREFIX}invite` again.")
-
+        await ctx.send(f":pleading_face: {ctx.author.mention}, you are not in a voice channel!")
 
 @bot.event
 async def on_ready():
@@ -56,7 +64,11 @@ async def on_ready():
 if __name__ == "__main__":
     from config.settings import TOKEN, PREFIX
 
-    if TOKEN:
+    if not TOKEN or not PREFIX:
+        print("❌ ERROR: Token or prefix is missing! Check your .env file.")
+        exit(1)
+    try:
         bot.run(TOKEN)
-    else:
-        print("❌ ERROR: Discord token is missing! Check your .env file.")
+    except Exception as e:
+        print(f"❌ ERROR: Failed to run the bot. {str(e)}")
+        exit(1)

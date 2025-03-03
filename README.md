@@ -46,11 +46,12 @@ pip install -r requirements.txt
 TOKEN=your_discord_bot_token
 PREFIX=any_symbol_as_prefix
 ```
-• Set your server ID and base voice channel ID in config/constants.py:
+• Set your server ID, base voice channel ID and allowed text channel ID in config/constants.py:
 
 ```
 GUILD_ID = 123  # Your Discord server ID
 BASE_VOICE_CHANNEL_ID = 321  # Base voice channel ID
+ALLOWED_CHANNEL_ID = 333 # Allowed text channel for invite command
 ```
 ---
 # 🎛 Running the Bot
