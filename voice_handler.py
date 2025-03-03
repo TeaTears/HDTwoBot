@@ -21,6 +21,11 @@ async def on_voice_state_update(member, before, after):
 
     if after.channel and after.channel.id == BASE_VOICE_CHANNEL_ID:
         category = after.channel.category
+        if after.channel and after.channel.id == BASE_VOICE_CHANNEL_ID:
+            category = after.channel.category
+            if not category:
+                print("⚠ Base voice channel is not inside a category! Cannot create team channels.")
+                return
         next_team_number = team_counters.get(guild.id, 1)
         team_counters[guild.id] = next_team_number + 1
 

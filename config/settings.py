@@ -5,3 +5,4 @@ dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
 
 TOKEN = os.getenv("TOKEN")
+PREFIX = os.getenv("PREFIX", "*")

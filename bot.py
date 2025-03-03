@@ -9,17 +9,24 @@ import voice_handler
 @bot.command()
 @commands.cooldown(1, 15, commands.BucketType.user)
 async def invite(ctx, *, message: str = "Join us in voice chat!"):
+    MAX_MESSAGE_LENGTH = 100
+
+    if len(message) > MAX_MESSAGE_LENGTH:
+        await ctx.message.delete()
+        await ctx.send(f"⚠ {ctx.author.mention}, your message was too long and has been deleted! Maximum {MAX_MESSAGE_LENGTH} characters allowed.")
+        return
+
     if ctx.author.voice and ctx.author.voice.channel:
         voice_channel = ctx.author.voice.channel
         invite = await voice_channel.create_invite(max_age=1800, max_uses=0)
-        await ctx.send(f"**Voice Channel Invite:** {invite.url}\n{message}")
+        await ctx.send(f"**Voice Channel Invite:** {invite.url}\n{ctx.author.mention} says: {message}")
     else:
-        await ctx.send("❌ You are not in a voice channel!")
+        await ctx.send(f"❌ {ctx.author.mention}, you are not in a voice channel!")
 
 @invite.error
 async def invite_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
-        await ctx.send(f"⏳ Please wait {error.retry_after:.1f} seconds before using `!invite` again.")
+        await ctx.send(f"⏳ Please wait {error.retry_after:.1f} seconds before using `{PREFIX}invite` again.")
 
 
 @bot.event
@@ -47,7 +54,7 @@ async def on_ready():
 
 
 if __name__ == "__main__":
-    from config.settings import TOKEN
+    from config.settings import TOKEN, PREFIX
 
     if TOKEN:
         bot.run(TOKEN)
