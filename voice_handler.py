@@ -1,3 +1,4 @@
+import os
 import random
 from config.bot_setup import bot
 from config.constants import GUILD_ID, BASE_VOICE_CHANNEL_ID
@@ -10,8 +11,9 @@ def load_words(filename):
         print(f"❌ File {filename} not found! Using fallback value.")
         return ["Default"]
 
-firstname = load_words("config/firstname.txt")
-secondname = load_words("config/secondname.txt")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+firstname = load_words(os.path.join(script_dir, "config", "firstname.txt"))
+secondname = load_words(os.path.join(script_dir, "config", "secondname.txt"))
 
 team_counters = {}
 
