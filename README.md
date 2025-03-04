@@ -18,7 +18,7 @@ It also provides an `!invite` command to share an invite link to your voice chan
 
 ### 1️⃣ Clone the Repository
 ```sh
-git clone https://github.com/yourusername/HelldiversTwoBot.git
+git clone https://github.com/TeaTears/HDTwoBot.git
 cd HelldiversTwoBot
 ```
 
