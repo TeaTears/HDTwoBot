@@ -11,6 +11,7 @@ last_used_cache = TTLCache(maxsize=50, ttl=15)
 
 @bot.command()
 async def invite(ctx, *, message: str = "Join us in voice chat!"):
+    await ctx.message.delete()
     if ctx.channel.id != ALLOWED_CHANNEL_ID:
         return
 
